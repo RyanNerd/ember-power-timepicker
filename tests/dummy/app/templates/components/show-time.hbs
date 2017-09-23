@@ -1,0 +1,58 @@
+<p>Default Times Array</p>
+
+<div style="text-align: right; clear: both; float: left; margin-right: 15px;">
+  Time:
+</div>
+<div style="width: 320px;">
+  {{time-picker
+    selectedTime=timeSelected
+    onchange=(action "onChange")
+  }}
+</div>
+<br/>
+<p>timeSelected property: {{timeSelected}}</p>
+<p>Time from Action.onChange(): {{time}} </p>
+<p>Hours: {{hours1}}</p>
+<p>Minutes: {{minutes1}}</p>
+
+<hr>
+
+<p>Calculated Times Array</p>
+<div style="text-align: right; clear: both; float: left; margin-right: 15px;">
+  Time:
+</div>
+<div style="width: 220px;">
+  {{time-picker
+    selectedTime=timeSelected2
+    onchange=(action "onChange2")
+    increment=5
+    placeholder="It's high noon"
+  }}
+</div>
+<br/>
+<p>timeSelected2 property: {{timeSelected2}}</p>
+<p>Time from Action.onChange2(): {{time2}} </p>
+<p>Hours: {{hours2}}</p>
+<p>Minutes: {{minutes2}}</p>
+<hr>
+
+<p>Custom Times Array</p>
+<div style="text-align: right; clear: both; float: left; margin-right: 15px;">
+  Time:
+</div>
+<div style="width: 220px;">
+  {{time-picker
+    triggerId="custom-times"
+    selectedTime=customTimeSelected
+    onchange=(action "onChange3")
+    allowClear=false
+    defaultTimeToNow=false
+    times=customTimes
+  }}
+</div>
+
+<br/>
+<p>customTimeSelected property: {{customTimeSelected}}</p>
+<p>Time from Action.onChange3(): {{customTimeSelectedEventValue}} </p>
+<p>Hours: {{hours3}}</p>
+<p>Minutes: {{minutes3}}</p>

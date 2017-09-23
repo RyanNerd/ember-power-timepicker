@@ -1,0 +1,1 @@
+export { default } from 'ember-power-timepicker/components/time-picker';

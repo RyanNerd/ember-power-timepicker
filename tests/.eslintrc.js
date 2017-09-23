@@ -1,5 +1,16 @@
 module.exports = {
+  root: true,
+  parserOptions: {
+    ecmaVersion: 2017,
+    sourceType: 'module'
+  },
+  extends: 'eslint:recommended',
   env: {
-    embertest: true
+    browser: true
+  },
+  rules: {
+  },
+  "globals": {
+    "timeseasons": false
   }
 };

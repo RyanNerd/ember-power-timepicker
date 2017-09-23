@@ -1,0 +1,30 @@
+{{#power-select
+  allowClear=allowClear
+  class=class
+  destination=destination
+  disabled=disabled
+  dropdownClass=dropdownClass
+  initiallyOpened=initiallyOpened
+  noMatchesMessage=noMatchesMessage
+  placeholder=placeholder
+  renderInPlace=renderInPlace
+  searchEnabled=searchEnabled
+  triggerId=triggerId
+  selected=selectedTime
+  placeholderComponent=placeholderComponent
+  selectedItemComponent=selectedTimeComponent
+  triggerComponent=triggerComponent
+  onblur=(action "onblur")
+  onchange=(action "onchange")
+  onclose=(action "onclose")
+  onfocus=(action "onfocus")
+  oninput=(action "oninput")
+  onkeydown=(action "onkeydown")
+  onopen=(action "onopen")
+  options=times as |time|}}
+  {{#if timeComponent}}
+    {{component timeComponent time=time}}
+  {{else}}
+    {{time}}
+  {{/if}}
+{{/power-select}}
