@@ -208,6 +208,13 @@ export default Component.extend(
     initiallyOpened: false,
 
     /**
+     * Message shown in the list of times while the times are still not resolved, typically after a search...
+     * @property {string}
+     * @public
+     */
+    loadingMessage: 'Loading times...',
+
+    /**
      * The default message displayed when searching for a time and the search has no match
      * in the times array.
      * @property {string}
