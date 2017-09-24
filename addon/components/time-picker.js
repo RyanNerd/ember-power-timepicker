@@ -87,13 +87,6 @@ export default Component.extend(
     selectedTimeComponent: 'selected-time',
 
     /**
-     * Class to be applied to the trigger only
-     * @property {string | undefined}
-     * @public
-     */
-    triggerClass: undefined,
-
-    /**
      * List of times to choose from (corresponds to the options property in power-select).
      * @property {string[] | null}
      * @public
@@ -149,6 +142,13 @@ export default Component.extend(
     /*******************************************
      * START: Power-select property pass-through
      *******************************************/
+
+    /**
+     * The component rendered after the list of options. It is empty by default in both single and multiple selects
+     * @property {string | null}
+     * @public
+     */
+    afterOptionsComponent: null,
 
     /**
      * When true the time can be cleared by clicking [x]
@@ -236,6 +236,13 @@ export default Component.extend(
      * @public
      */
     triggerComponent: 'power-select/trigger',
+
+    /**
+     * Class to be applied to the trigger only
+     * @property {string | undefined}
+     * @public
+     */
+    triggerClass: undefined,
 
     /**
      * Power-select pass-through - The id to be applied to the trigger.
