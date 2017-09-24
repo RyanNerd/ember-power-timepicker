@@ -87,6 +87,13 @@ export default Component.extend(
     selectedTimeComponent: 'selected-time',
 
     /**
+     * Class to be applied to the trigger only
+     * @property {string | undefined}
+     * @public
+     */
+    triggerClass: undefined,
+
+    /**
      * List of times to choose from (corresponds to the options property in power-select).
      * @property {string[] | null}
      * @public
