@@ -158,11 +158,26 @@ export default Component.extend(
     allowClear: true,
 
     /**
+     * The component rendered before the list of options defaults to the searchbox.
+     * @property {string}
+     * @public
+     */
+    beforeOptionsComponent: 'power-select/before-options',
+
+    /**
      * The CSS class of the power-select component.
      * @property {string | null}
      * @public
      */
     class: null,
+
+    /**
+     * Defaults to true. When false, the component won't be closed after the user chooses an option, either with the
+     * mouse/keyboard or using the `choose` action in the publicAPI.
+     * @property {boolean}
+     * @public
+     */
+    closeOnSelect: true,
 
     /**
      * Id of the element used as target for the dropdown's content, when not rendered in place.
