@@ -215,6 +215,13 @@ export default Component.extend(
     loadingMessage: 'Loading times...',
 
     /**
+     * When enabled (and it's enabled by default) the dropdown with match the width of the trigger.
+     * @property {boolean}
+     * @public
+     */
+    matchTriggerWidth: true,
+
+    /**
      * The default message displayed when searching for a time and the search has no match
      * in the times array.
      * @property {string}
