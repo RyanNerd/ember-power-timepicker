@@ -21,6 +21,13 @@ ember install ember-power-timepicker
 These properties behave the same as [documented](http://www.ember-power-select.com/docs/api-reference) in ember-power-select:
 
 ```javascript
+    /**
+     * The component rendered after the list of options. It is empty by default in both single and multiple selects
+     * @property {string | null}
+     * @public
+     */
+  afterOptionsComponent: null
+
   /**
    * When true the time can be cleared by clicking [x].
    * @property {boolean}
@@ -29,11 +36,26 @@ These properties behave the same as [documented](http://www.ember-power-select.c
   allowClear: true
 
   /**
+   * The component rendered before the list of options defaults to the searchbox.
+   * @property {string | undefined}
+   * @public
+   */
+  beforeOptionsComponent: undefined
+
+  /**
    * The CSS class of the power-select component.
    * @property {string | null}
    * @public
    */
   class: null
+
+    /**
+     * Defaults to true. When false, the component won't be closed after the user chooses an option, either with the
+     * mouse/keyboard or using the `choose` action in the publicAPI.
+     * @property {boolean}
+     * @public
+     */
+  closeOnSelect: true
 
   /**
    * Id of the element used as target for the dropdown's content, when not rendered in place.
@@ -62,6 +84,20 @@ These properties behave the same as [documented](http://www.ember-power-select.c
    * @public
    */
   initiallyOpened: false
+
+    /**
+     * Message shown in the list of times while the times are still not resolved, typically after a search...
+     * @property {string}
+     * @public
+     */
+  loadingMessage: 'Loading times...'
+
+    /**
+     * When enabled (and it's enabled by default) the dropdown with match the width of the trigger.
+     * @property {boolean}
+     * @public
+     */
+  matchTriggerWidth: true
 
   /**
    * The default message displayed when searching for a time and the search has no match
@@ -94,19 +130,26 @@ These properties behave the same as [documented](http://www.ember-power-select.c
    */
   searchEnabled: true
 
+    /**
+     * Class to be applied to the trigger only
+     * @property {string | undefined}
+     * @public
+     */
+  triggerClass: undefined
+
   /**
    * Component to be rendered as placeholder. It can be used along with placeholder and has access to it.
-   * @property {string | undefined}
+   * @property {string}
    * @public
    */
-  placeholderComponent: undefined
+  placeholderComponent: 'power-select/placeholder'
 
   /**
    * The component to render instead of the default one inside the trigger.
-   * @property {string | undefined}
+   * @property {string}
    * @public
    */
-  triggerComponent: undefined
+  triggerComponent: 'power-select/trigger'
 
   /**
    * The id to be applied to the trigger.
@@ -114,7 +157,7 @@ These properties behave the same as [documented](http://www.ember-power-select.c
    * @property {string}
    * @public
    */
-  triggerId: ""
+  triggerId: ''
 ```
 
 **Ember Time Picker Properties**
