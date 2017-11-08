@@ -56,3 +56,27 @@
 <p>Time from Action.onChange3(): {{customTimeSelectedEventValue}} </p>
 <p>Hours: {{hours3}}</p>
 <p>Minutes: {{minutes3}}</p>
+
+<hr/>
+
+<p>Military</p>
+<div style="text-align: right; clear: both; float: left; margin-right: 15px;">
+  Time:
+</div>
+<div style="width: 220px;">
+  {{time-picker
+    selectedTime=militaryTime
+    onchange=(action "onMilitaryTime")
+    startTimeHour=0
+    endTimeHour=23
+    increment=5
+    military=true
+    placeholder="What time is it soldier?"
+  }}
+</div>
+<br/>
+<p>militaryTime property: {{militaryTime}}</p>
+<p>Time from Action.onMilitaryTime(): {{soldierTime}} </p>
+<p>Hours: {{hoursMil}}</p>
+<p>Minutes: {{minutesMil}}</p>
+<hr>

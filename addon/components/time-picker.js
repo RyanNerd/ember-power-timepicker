@@ -297,7 +297,9 @@ export default Component.extend(
       let startTimeHour = this.get('startTimeHour');
       let endTimeHour = this.get('endTimeHour');
       let times = this.get('times');
-      let military =this.get('military');
+      let military = this.get('military');
+      let selectedTime = this.get('selectedTime');
+      selectedTime = (typeof selectedTime === 'undefined' || selectedTime === null) ? null : selectedTime;
 
       // If increment, startTimeHour, or endTimeHour is set then we calculate the times array.
       if (increment !== null || startTimeHour !== null || endTimeHour !== null) {
@@ -309,7 +311,7 @@ export default Component.extend(
           startTimeHour = 1;
         }
         if (endTimeHour === null) {
-          endTimeHour = 24;
+          endTimeHour = 23;
         }
 
         // Cast increment, startTimeHour, and endTimeHour to int.
@@ -327,8 +329,13 @@ export default Component.extend(
           assert('time-picker: The startTimeHour property can not be < 1.', startTimeHour >= 1);
           assert('time-picker: The endTimeHour property can not be < 1.', endTimeHour >= 1);
         }
-        assert('time-picker: The startTimeHourProperty can not be > 24.', startTimeHour <= 24);
-        assert('time-picker: The endTimeHourProperty can not be > 24.', endTimeHour <= 24);
+
+        /**
+         * @see http://www.spacearchive.info/military.htm
+         */
+        assert('time-picker: The startTimeHourProperty can not be > 23.', startTimeHour <= 23);
+        assert('time-picker: The endTimeHourProperty can not be > 23.', endTimeHour <= 23);
+
         assert('time-picker: The startTimeHour can not be > endTimeHour.', startTimeHour <= endTimeHour);
 
         // Calculate the times[]
@@ -365,8 +372,6 @@ export default Component.extend(
       assert('time-picker: The times property must be a string array with at least one element.',
         times.length !== 0 && typeof times[0] === 'string');
 
-      let selectedTime = this.get('selectedTime');
-
       // Is defaultTimeToNow true and the selectedTime not set?
       if (selectedTime === null && this.get('defaultTimeToNow') === true) {
         // Get a Date object set to "now"
@@ -382,7 +387,7 @@ export default Component.extend(
          * Look for a valid time in the times array and adjust minutes until we find one
          * or set it to null if no match found.
          */
-        while(!times.includes(this.getFormattedTime(time))) {
+        while(!times.includes(this.getFormattedTime(time, military))) {
           minutes++;
           if (minutes > 59) {
             minutes = 0;
@@ -404,9 +409,11 @@ export default Component.extend(
         }
 
         // Was a valid time of "now" in the times array?
-        if (time !== null) {
+        if (time !== null && times.includes(this.getFormattedTime(time, military))) {
           // Since we calculated the selectedTime we fake an onchange action to bubble up the event.
-          this.send('onchange', this.getFormattedTime(time));
+          this.send('onchange', this.getFormattedTime(time, military));
+        } else {
+          warn('time-picker: Unable to set default time', {"id" : "ember-power-timepicker"});
         }
       }
 
@@ -443,9 +450,10 @@ export default Component.extend(
      * Returns the date object (or the current date) as a string in a "digital clock" format:
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Numbers_and_dates
      * @param {Date | null} date Date object; if not provided the current date/time will be used.
+     * @param {boolean} military Indicates if the formatted time should be military or not.
      * @returns {string} The date as a string in a "digital clock" format (ex: 12:08 PM, 3:14 AM).
      */
-    getFormattedTime(date = null)
+    getFormattedTime(date = null, military = false)
     {
       assert('time-picker: Invalid type, the date argument must be either null or a Date type.',
         date === null || date instanceof Date);
@@ -458,12 +466,23 @@ export default Component.extend(
       }
       let hour = time.getHours();
       let minute = time.getMinutes();
-      let temp = '' + ((hour > 12) ? hour - 12 : hour);
-      if (hour === 0) {
-        temp = '12';
+      let temp;
+
+      if (military) {
+        temp = ((hour < 10) ? '0' : '') + hour;
+      } else {
+        temp = '' + ((hour > 12) ? hour - 12 : hour);
+        if (hour === 0) {
+          temp = '12';
+        }
       }
+
       temp += ((minute < 10) ? ':0' : ':') + minute;
-      temp += (hour >= 12) ? ' PM' : ' AM';
+
+      if (!military) {
+        temp += (hour >= 12) ? ' PM' : ' AM';
+      }
+
       return temp;
     },
 
