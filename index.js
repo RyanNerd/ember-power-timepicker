@@ -9,7 +9,7 @@ module.exports = {
     this._super.included.apply(this, arguments);
 
     try {
-      this.ui.writeLine('Initializing ember-power-timepicker.');
+       // this.ui.writeLine('Initializing ember-power-timepicker.');
     } catch (e) {
       // NOP
     }

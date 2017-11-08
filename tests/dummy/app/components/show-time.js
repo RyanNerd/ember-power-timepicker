@@ -16,6 +16,8 @@ export default Component.extend(
   minutes2: null,
   hours3: null,
   minutes3: null,
+  hoursMil: null,
+  minutesMil: null,
 
   customTimeSelectedEventValue: null,
   customTimeSelected: null,
@@ -64,6 +66,13 @@ export default Component.extend(
       this.set('hours3', hours);
       this.set('minutes3', minutes);
       this.set('customTimeSelectedEventValue', value);
+    },
+
+    onMilitaryTime(value, hours, minutes)
+    {
+      this.set('hoursMil', hours);
+      this.set('minutesMil', minutes);
+      this.set('soldierTime', value);
     }
   }
 });
