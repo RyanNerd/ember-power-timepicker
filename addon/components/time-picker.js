@@ -124,18 +124,18 @@ export default Component.extend(
     increment: null,
 
     /**
-     * Indicates the beginning hour in the picklist. If not set then 1 will be used.
+     * Indicates the beginning hour in the picklist. If not set then 0 military otherwise 1 will be used.
      * @property {int | null}
      * @public
-     * @default 1
+     * @default 0 | 1
      */
     startTimeHour: null,
 
     /**
-     * Indicates the ending hour in the picklist. If not set the 24 is the default.
+     * Indicates the ending hour in the picklist. If not set the 23 is the default.
      * @property {int | null}
      * @public
-     * @default 24
+     * @default 23
      */
     endTimeHour: null,
 
@@ -308,7 +308,11 @@ export default Component.extend(
           increment = 30;
         }
         if (startTimeHour === null) {
-          startTimeHour = 1;
+          if (military) {
+            startTimeHour = 0;
+          } else {
+            startTimeHour = 1;
+          }
         }
         if (endTimeHour === null) {
           endTimeHour = 23;
@@ -447,11 +451,13 @@ export default Component.extend(
     },
 
     /**
-     * Returns the date object (or the current date) as a string in a "digital clock" format:
+     * Returns the date object (or the current date) as a string in a "digital clock" or military format:
+     *
+     * @private
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Numbers_and_dates
      * @param {Date | null} date Date object; if not provided the current date/time will be used.
      * @param {boolean} military Indicates if the formatted time should be military or not.
-     * @returns {string} The date as a string in a "digital clock" format (ex: 12:08 PM, 3:14 AM).
+     * @returns {string} The date as a string in a "digital clock" format (ex: 12:08 PM, 3:14 AM) or in military time.
      */
     getFormattedTime(date = null, military = false)
     {
@@ -487,37 +493,98 @@ export default Component.extend(
     },
 
     /**
-     * Return the Hours as integer from a time string.
-     * @public
-     * @returns {int | null}
+     * Return the Hours as an integer from a time string.
+     *
+     * @private
+     * @param {string} timeString
+     * @returns {int}
      */
     hours(timeString)
     {
-      let hours = null;
-      if (timeString) {
-        let date = new Date('1970-01-01 ' + timeString);
-        hours = date.getHours();
+      if (typeof timeString !== 'string' || timeString.length === 0) {
+        throw new TypeError('timeString must be a non-empty string.');
       }
+
+      let date = new Date('1970-01-01 ' + timeString);
+      let hours = date.getHours();
+      if (!isNaN(hours)) {
+        return hours;
+      }
+
+      // Probably FF so we need to manually parse the timeString
+      for (let i = 0, c, temp = ""; i < timeString.length; i++) {
+        c = timeString.charAt(i);
+
+        // When this is encountered then we know we have the hours part.
+        if (c  === ':') {
+          hours = parseInt(temp);
+        }
+        temp += c;
+
+        // am, AM, A.M., or a.m. in the timeString? if so we're done.
+        if (c.toLowerCase() === 'a') {
+          break;
+        }
+
+        // pm, PM, P.M., or p.m. in the timeString? If so then add 12 to the hour and we're done.
+        if (c.toLowerCase() === 'p') {
+          hours += 12;
+          break;
+        }
+      }
+
+      assert('time-picker: hours return value must be an integer between 0-23', hours >= 0 && hours <= 23);
+
       return hours;
     },
 
     /**
      * Return Minutes as an integer from a time string.
-     * @public
+     *
+     * @private
+     * @param {string} timeString
      * @returns {int | null}
      */
     minutes(timeString)
     {
-      let minutes = null;
-      if (timeString) {
-        let date = new Date('1970-01-01 ' + timeString);
-        minutes =  date.getMinutes();
+      if (typeof timeString !== 'string' || timeString.length === 0) {
+        throw new TypeError('timeString must be a non-empty string.');
       }
+
+      let date = new Date('1970-01-01 ' + timeString);
+      let minutes =  date.getMinutes();
+      if (!isNaN(minutes)) {
+        return minutes;
+      }
+
+      // Probably FF so we need to manually parse the timeString
+      for (let i = 0, c, temp = ""; i < timeString.length; i++) {
+        c = timeString.charAt(i);
+
+        // am, AM, A.M., a.m., pm, PM, P.M., or p.m. in the timeString? if so we're done.
+        if (c.toLowerCase() === 'a' || c.toLowerCase() === 'p') {
+          minutes = parseInt(temp);
+          break;
+        }
+
+        // When this is encountered then we know that the minutes follow.
+        if (c  === ':') {
+          temp = '';
+        } else {
+          temp += c;
+        }
+      }
+      minutes = parseInt(minutes);
+
+      assert('time-picker: minutes return value must be an integer between 0-59', minutes >= 0 && minutes <= 59);
+
       return minutes;
     },
 
     /**
      * Add leading zeros to a number returning the zero padded number as a string.
+     *
+     * @private
      * @param {number} num The number to pad with zeros.
      * @param {int} places Number of digits of the number to have leading zeros.
      * @returns {string}
@@ -533,80 +600,81 @@ export default Component.extend(
      * @see http://www.ember-power-select.com/docs/api-reference
      */
     actions:
+    {
+      /**
+       * Invoked when component or any of its subitems looses the focus.
+       * The last argument is the FocusEvent, that can be used to disambiguate what gained the focus.
+       *
+       * @param select
+       * @param e
+       */
+      onblur(select, e)
       {
-        /**
-         * Invoked when component or any of its subitems looses the focus.
-         * The last argument is the FocusEvent, that can be used to disambiguate what gained the focus.
-         * @param select
-         * @param e
-         */
-        onblur(select, e)
-        {
-          this.sendAction('onblur', select, e);
-        },
+        this.sendAction('onblur', select, e);
+      },
 
-        /**
-         * Invoked when the user selects an option.
-         * Two-way binding is established by setting the selectedTime property when a new selection is made.
-         * @param {string | null } timeString
-         */
-        onchange(timeString)
-        {
-          // Update the selectedTime.
-          this.set('selectedTime', timeString);
+      /**
+       * Invoked when the user selects an option.
+       * Two-way binding is established by setting the selectedTime property when a new selection is made.
+       * @param {string | null } timeString
+       */
+      onchange(timeString)
+      {
+        // Update the selectedTime.
+        this.set('selectedTime', timeString);
 
-          this.sendAction('onchange', timeString, this.hours(timeString), this.minutes(timeString));
-        },
+        this.sendAction('onchange', timeString, this.hours(timeString), this.minutes(timeString));
+      },
 
-        /**
-         * Invoked when the component is closed.
-         * @param select
-         * @param e
-         */
-        onclose(select, e)
-        {
-          this.sendAction('onclose', select, e);
-        },
+      /**
+       * Invoked when the component is closed.
+       * @param select
+       * @param e
+       */
+      onclose(select, e)
+      {
+        this.sendAction('onclose', select, e);
+      },
 
-        /**
-         * Invoked when the component gets focus.
-         * @param select
-         * @param e
-         */
-        onfocus(select, e)
-        {
-          this.sendAction('onfocus', select, e);
-        },
+      /**
+       * Invoked when the component gets focus.
+       * @param select
+       * @param e
+       */
+      onfocus(select, e)
+      {
+        this.sendAction('onfocus', select, e);
+      },
 
-        /**
-         * Invoked when the user changes the text in any any search input of the component.
-         * If the function returns false the default behaviour (filter/search) is prevented.
-         * @param select
-         * @param e
-         */
-        oninput(select, e)
-        {
-          this.sendAction('oninput', select, e);
-        },
+      /**
+       * Invoked when the user changes the text in any any search input of the component.
+       * If the function returns false the default behaviour (filter/search) is prevented.
+       * @param select
+       * @param e
+       */
+      oninput(select, e)
+      {
+        this.sendAction('oninput', select, e);
+      },
 
-        /**
-         * Invoked when the user presses a key being the component or the inputs inside it focused.
-         * @param dropdown
-         * @param e
-         */
-        onkeydown(dropdown, e)
-        {
-          this.sendAction("onkeydown", dropdown, e);
-        },
+      /**
+       * Invoked when the user presses a key being the component or the inputs inside it focused.
+       * @param dropdown
+       * @param e
+       */
+      onkeydown(dropdown, e)
+      {
+        this.sendAction("onkeydown", dropdown, e);
+      },
 
-        /**
-         * Invoked when the component is opened.
-         * @param select
-         * @param e
-         */
-        onopen(select, e)
-        {
-          this.sendAction('onopen', select, e);
-        }
+      /**
+       * Invoked when the component is opened.
+       * @param select
+       * @param e
+       */
+      onopen(select, e)
+      {
+        this.sendAction('onopen', select, e);
       }
-  });
+    }
+});
