@@ -5,6 +5,11 @@
 This is an Ember addon that uses the wonderful [ember-power-select](https://github.com/cibernox/ember-power-select)
 component for the singular purpose of allowing the user to select a time of day from a picklist.
 
+## IMPORTANT
+**This project is no longer being worked on** other than for security related issues.
+If you are interested in taking over this project please create an issue and I'll work out the details of transfering the project with you.
+See #13 for more information.
+
 ## Installation
 
 Ember Time Picker has the same requirements as ember-power-select namely Ember **2.3.1+**
