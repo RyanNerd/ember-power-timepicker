@@ -10,6 +10,8 @@ import { assert, warn } from '@ember/debug';
  */
 const DEFAULT_TIMES =
   [
+    '12:30 AM',
+    '12:00 AM',
     '1:00 AM',
     '1:30 AM',
     '2:00 AM',
@@ -32,9 +34,9 @@ const DEFAULT_TIMES =
     '10:30 AM',
     '11:00 AM',
     '11:30 AM',
-    '12:30 AM',
-    '12:00 AM',
 
+    '12:00 PM',
+    '12:30 PM',
     '1:00 PM',
     '1:30 PM',
     '2:00 PM',
