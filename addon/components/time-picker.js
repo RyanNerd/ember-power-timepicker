@@ -10,6 +10,8 @@ import { assert, warn } from '@ember/debug';
  */
 const DEFAULT_TIMES =
   [
+    '12:30 AM',
+    '12:00 AM',
     '1:00 AM',
     '1:30 AM',
     '2:00 AM',
@@ -32,9 +34,9 @@ const DEFAULT_TIMES =
     '10:30 AM',
     '11:00 AM',
     '11:30 AM',
-    '12:30 AM',
-    '12:00 AM',
 
+    '12:00 PM',
+    '12:30 PM',
     '1:00 PM',
     '1:30 PM',
     '2:00 PM',
@@ -296,7 +298,7 @@ export default Component.extend(
       let increment = this.get('increment');
       let startTimeHour = this.get('startTimeHour');
       let endTimeHour = this.get('endTimeHour');
-      let times = this.get('times');
+      let times = this.get('times') || [];
       let military = this.get('military');
       let selectedTime = this.get('selectedTime');
       selectedTime = (typeof selectedTime === 'undefined' || selectedTime === null) ? null : selectedTime;
@@ -343,25 +345,26 @@ export default Component.extend(
         assert('time-picker: The startTimeHour can not be > endTimeHour.', startTimeHour <= endTimeHour);
 
         // Calculate the times[]
-        times = [];
-        for (let hour = startTimeHour; hour <= endTimeHour; hour++) {
-          let amPm = "";
-          let actualHour = this.zeroPad(hour, 2);
+        if (times.length === 0) {
+          for (let hour = startTimeHour; hour <= endTimeHour; hour++) {
+            let amPm = "";
+            let actualHour = this.zeroPad(hour, 2);
 
-          // If NOT using military time then include AM/PM and change the actualHour to modulo 12 and drop leading zeros.
-          if (military === false) {
-            amPm = (hour > 12) ? ' PM' : ' AM';
-            actualHour = (hour > 12) ? hour - 12 : hour;
-            actualHour = actualHour.toString();
-          }
+            // If NOT using military time then include AM/PM and change the actualHour to modulo 12 and drop leading zeros.
+            if (military === false) {
+              amPm = (hour > 12) ? ' PM' : ' AM';
+              actualHour = (hour > 12) ? hour - 12 : hour;
+              actualHour = actualHour.toString();
+            }
 
-          let minutes = 0;
-          while (minutes <=59) {
-            // Push the calculated time into the array.
-            times.push(actualHour + ':' + this.zeroPad(minutes, 2) + amPm);
+            let minutes = 0;
+            while (minutes <=59) {
+              // Push the calculated time into the array.
+              times.push(actualHour + ':' + this.zeroPad(minutes, 2) + amPm);
 
-            // Increment the minutes.
-            minutes += increment;
+              // Increment the minutes.
+              minutes += increment;
+            }
           }
         }
       }
